@@ -25,9 +25,7 @@ class cl(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self, *args):
-        print(1)
         if self.rect.collidepoint(args[0].pos):
-            print(2)
             self.image = self.imc
 
 if __name__ == '__main__':
