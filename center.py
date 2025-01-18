@@ -2,9 +2,10 @@ import os
 import sys
 
 import pygame
+from pygame.examples.cursors import image
 
 
-def load_image(name, colorkey=None):
+def load_image(name):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
@@ -13,19 +14,41 @@ def load_image(name, colorkey=None):
     return image
 
 
-class cl(pygame.sprite.Sprite):
+class ta(pygame.sprite.Sprite):
+    image = load_image('Танчики.png')
     imc = load_image('Нажатие.png')
 
-    def __init__(self, group, i, x, y):
-        super().__init__(group)
-        self.image = load_image(i)
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = ta.image
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = 10
+        self.rect.y = 60
 
     def update(self, *args):
         if self.rect.collidepoint(args[0].pos):
             self.image = self.imc
+        else:
+            self.image = ta.image
+
+
+class te(pygame.sprite.Sprite):
+    image = load_image('Тетрис.png')
+    imc = load_image('Нажатие.png')
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = te.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 120
+        self.rect.y = 60
+
+    def update(self, *args):
+        if self.rect.collidepoint(args[0].pos):
+            self.image = self.imc
+        else:
+            self.image = te.image
+
 
 if __name__ == '__main__':
     pygame.init()
@@ -40,13 +63,8 @@ if __name__ == '__main__':
     mem = 0
 
     all_im = pygame.sprite.Group()
-    x = 10
-    y = 60
-    for i in ['Танчики.png']:
-        print(i)
-        x = x
-        y = y
-        cl(all_im, i, x, y)
+    ta(all_im)
+    te(all_im)
 
     running = True
     while running:
