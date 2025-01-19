@@ -1,8 +1,9 @@
 import os
 import sys
-
+import random
 import pygame
-from pygame.examples.cursors import image
+import tanks
+import tetris
 
 
 def load_image(name):
@@ -28,6 +29,7 @@ class ta(pygame.sprite.Sprite):
     def update(self, *args):
         if self.rect.collidepoint(args[0].pos):
             self.image = self.imc
+            tanks.tanks()
         else:
             self.image = ta.image
 
@@ -46,6 +48,7 @@ class te(pygame.sprite.Sprite):
     def update(self, *args):
         if self.rect.collidepoint(args[0].pos):
             self.image = self.imc
+            tetris.tetris()
         else:
             self.image = te.image
 
@@ -61,6 +64,7 @@ if __name__ == '__main__':
     f1 = pygame.font.Font(None, 36)
     text1 = f1.render('вас приветствует Game Center, во что сыграем сегодня?', 1, (0, 0, 0))
     mem = 0
+    fps = 60
 
     all_im = pygame.sprite.Group()
     ta(all_im)
@@ -85,5 +89,6 @@ if __name__ == '__main__':
         all_im.draw(screen)
         pygame.draw.rect(screen, (70, 70, 70), ((0, 0), (1920, 50)))
         screen.blit(text1, (10, 10))
+        clock.tick(fps)
         pygame.display.flip()
     pygame.quit()
