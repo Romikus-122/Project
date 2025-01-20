@@ -19,3 +19,11 @@ def tetris():
     size = width, height = 1920, 1080
     screen = pygame.display.set_mode(size)
     fps = 60
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        pygame.display.flip()

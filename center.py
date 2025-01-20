@@ -30,8 +30,7 @@ class ta(pygame.sprite.Sprite):
         if self.rect.collidepoint(args[0].pos):
             self.image = self.imc
             tanks.tanks()
-        else:
-            self.image = ta.image
+        self.image = ta.image
 
 
 class te(pygame.sprite.Sprite):
@@ -49,8 +48,7 @@ class te(pygame.sprite.Sprite):
         if self.rect.collidepoint(args[0].pos):
             self.image = self.imc
             tetris.tetris()
-        else:
-            self.image = te.image
+        self.image = te.image
 
 
 if __name__ == '__main__':
