@@ -25,5 +25,5 @@ def tetris():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-#тестовый коммит 2
+#тестовый коммит 3
         pygame.display.flip()
