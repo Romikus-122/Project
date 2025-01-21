@@ -17,7 +17,6 @@ def load_image(name):
 
 class ta(pygame.sprite.Sprite):
     image = load_image('Танчики.png')
-    imc = load_image('Нажатие.png')
 
     def __init__(self, *group):
         super().__init__(*group)
@@ -28,27 +27,22 @@ class ta(pygame.sprite.Sprite):
 
     def update(self, *args):
         if self.rect.collidepoint(args[0].pos):
-            self.image = self.imc
             tanks.tanks()
-        self.image = ta.image
 
 
 class te(pygame.sprite.Sprite):
     image = load_image('Тетрис.png')
-    imc = load_image('Нажатие.png')
 
     def __init__(self, *group):
         super().__init__(*group)
         self.image = te.image
         self.rect = self.image.get_rect()
-        self.rect.x = 120
+        self.rect.x = 220
         self.rect.y = 60
 
     def update(self, *args):
         if self.rect.collidepoint(args[0].pos):
-            self.image = self.imc
             tetris.tetris()
-        self.image = te.image
 
 
 if __name__ == '__main__':

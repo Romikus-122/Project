@@ -3,7 +3,6 @@ import sys
 import random
 
 import pygame
-from pygame import KEYDOWN
 
 
 def load_image(name):
@@ -122,8 +121,10 @@ def tanks():
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                v = False
-            if event.type == KEYDOWN:
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
                 if event.key == pygame.K_s:
                     if mem < 7:
                         mem += 1
@@ -155,7 +156,10 @@ def tanks():
     while ga:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                ga = False
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
         screen.fill((0, 0, 0))
 
 
