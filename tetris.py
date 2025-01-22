@@ -94,3 +94,4 @@ def tetris():
         draw_board(screen)
         draw_text(screen, best, score)
         pygame.display.flip()
+        #bieber
