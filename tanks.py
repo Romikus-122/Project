@@ -17,12 +17,12 @@ def load_image(name):
 class obv(pygame.sprite.Sprite):
     image = load_image('обводка.png')
 
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         self.image = obv.image
         self.rect = self.image.get_rect()
-        self.rect.x = 490
-        self.rect.y = 340
+        self.rect.x = x
+        self.rect.y = y
 
     def update(self, mem):
         self.rect.y = mem
@@ -57,6 +57,24 @@ def tanks():
     s.rect.x = 400
     s.rect.y = 180
     sg.add(s)
+    fpoints = open('points')
+    point = fpoints.readlines()
+    f1 = pygame.font.Font(None, 50)
+    ttext1 = f1.render(str(point[0][:6]), 0, (100, 100, 100))
+    f2 = pygame.font.Font(None, 50)
+    ttext2 = f2.render(str(point[1][:6]), 0, (100, 100, 100))
+    f3 = pygame.font.Font(None, 50)
+    ttext3 = f3.render(str(point[2][:6]), 0, (100, 100, 100))
+    f4 = pygame.font.Font(None, 50)
+    ttext4 = f4.render(str(point[3][:6]), 0, (100, 100, 100))
+    f5 = pygame.font.Font(None, 50)
+    ttext5 = f5.render(str(point[4][:6]), 0, (100, 100, 100))
+    f6 = pygame.font.Font(None, 50)
+    ttext6 = f6.render(str(point[5][:6]), 0, (100, 100, 100))
+    f7 = pygame.font.Font(None, 50)
+    ttext7 = f7.render(str(point[6][:6]), 0, (100, 100, 100))
+    f8 = pygame.font.Font(None, 50)
+    ttext8 = f8.render(str(point[7][:6]), 0, (100, 100, 100))
 
     p = pygame.sprite.Sprite()
     p.image = load_image('Танчики игрок0.png')
@@ -107,11 +125,11 @@ def tanks():
     p7.rect.y = 875
     sg.add(p7)
     g = pygame.sprite.Group()
-    obv(g)
+    obv(490, 340, g)
 
 
     f1 = pygame.font.Font(None, 60)
-    text1 = f1.render('Денди Танчики', 0, (100, 0, 0))
+    text1 = f1.render('Денди Танчики', 0, (255, 0, 0))
     f2 = pygame.font.Font(None, 60)
     text2 = f2.render('Выберите танк', 0, (100, 100, 100))
     v = True
@@ -138,32 +156,109 @@ def tanks():
         clock.tick(fps)
         screen.blit(text1, (500, 200))
         screen.blit(text2, (500, 300))
+        screen.blit(ttext1, (600, 350))
+        screen.blit(ttext2, (600, 425))
+        screen.blit(ttext3, (600, 500))
+        screen.blit(ttext4, (600, 575))
+        screen.blit(ttext5, (600, 650))
+        screen.blit(ttext6, (600, 725))
+        screen.blit(ttext7, (600, 800))
+        screen.blit(ttext8, (600, 875))
         g.draw(screen)
         sg.draw(screen)
         pygame.display.flip()
 
-    # в разработке
+    # главное меню
     f1 = pygame.font.Font(None, 60)
-    text1 = f1.render('дальнейший геймплей в разработке', 0, (100, 0, 0))
+    text1 = f1.render('Компания', 0, (255, 0, 0))
+    f2 = pygame.font.Font(None, 60)
+    text2 = f2.render('Создать свой уровень', 0, (255, 0, 0))
+    f3 = pygame.font.Font(None, 100)
+    text3 = f3.render('Денди танчики', 0, (255, 0, 0))
+    f4 = pygame.font.Font(None, 60)
+    text4 = f4.render('Открыть свой уровень', 0, (255, 0, 0))
+    f5 = pygame.font.Font(None, 50)
+    text5 = f5.render(str(point[int(player)][:6]), 0, (100, 100, 100))
     ga = True
     gamep = pygame.sprite.Group()
-    playersp = pygame.sprite.Sprite()
     p.image = load_image('Танчики игрок' + player + '.png')
+    pl = 'Танчики игрок' + player + '.png'
     p.rect = s.image.get_rect()
     p.rect.x = 0
     p.rect.y = 0
     gamep.add(p)
+    mem = 0
+    g = pygame.sprite.Group()
+    obv(490, 275, g)
     while ga:
+        screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return
-        screen.fill((0, 0, 0))
-
-
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+                    if event.key == pygame.K_s:
+                        if mem < 2:
+                            mem += 1
+                    if event.key == pygame.K_w:
+                        if mem > 0:
+                            mem -= 1
+                    g.update(mem * 100 + 275)
+                    if event.key == pygame.K_e and mem == 0: #проверка выбора режима (только компания) !!! доработать
+                        ga = False
         clock.tick(fps)
-        screen.blit(text1, (500, 200))
+        g.draw(screen)
+        screen.blit(text1, (500, 300))
+        screen.blit(text2, (500, 400))
+        screen.blit(text3, (500, 200))
+        screen.blit(text4, (500, 500))
+        screen.blit(text5, (100, 0))
         gamep.draw(screen)
+        pygame.display.flip()
+    if mem == 0:
+        print(1)
+    if mem == 1:
+        print(2)
+    if mem == 2:
+        print(3)
+
+    # лвл1
+    f1 = pygame.font.Font(None, 100)
+    lives = 3
+    lvlpoints = 0
+    li = pygame.sprite.Group()
+    p = pygame.sprite.Sprite()
+    p.image = load_image(pl)
+    p.rect = s.image.get_rect()
+    p.rect.x = 10
+    p.rect.y = 100
+    li.add(p)
+    p1 = pygame.sprite.Sprite()
+    p1.image = load_image(pl)
+    p1.rect = s.image.get_rect()
+    p1.rect.x = 10
+    p1.rect.y = 200
+    li.add(p1)
+    p2 = pygame.sprite.Sprite()
+    p2.image = load_image(pl)
+    p2.rect = s.image.get_rect()
+    p2.rect.x = 10
+    p2.rect.y = 300
+    li.add(p2)
+    text1 = f1.render('Уровень: 1', 0, (255, 0, 0))
+    tgame = True
+    while tgame:
+        screen.fill((0, 0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+        li.draw(screen)
+        clock.tick(fps)
+        screen.blit(text1, (0, 0))
         pygame.display.flip()
