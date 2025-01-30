@@ -61,6 +61,10 @@ if __name__ == '__main__':
     all_im = pygame.sprite.Group()
     ta(all_im)
     te(all_im)
+    f2 = pygame.font.Font(None, 40)
+    text2 = f2.render('Денди танчики', 1, (0, 0, 0))
+    f3 = pygame.font.Font(None, 40)
+    text3 = f3.render('Тетрис', 1, (0, 0, 0))
 
     running = True
     while running:
@@ -84,6 +88,8 @@ if __name__ == '__main__':
         all_im.draw(screen)
         pygame.draw.rect(screen, (70, 70, 70), ((0, 0), (1920, 50)))
         screen.blit(text1, (10, 10))
+        screen.blit(text2, (10, 270))
+        screen.blit(text3, (260, 270))
         clock.tick(fps)
         pygame.display.flip()
     pygame.quit()
