@@ -28,6 +28,71 @@ class obv(pygame.sprite.Sprite):
         self.rect.y = mem
 
 
+class сplayer(pygame.sprite.Sprite):
+    def __init__(self, x, y, p, *group):
+        super().__init__(*group)
+        self.image = load_image(p)
+        self.orimage = self.image
+        self.r = 0
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self, mem):
+        if mem == 1:
+            self.image = pygame.transform.rotate(self.orimage, 0)
+            self.r = 0
+            if self.rect.y > 55:
+                self.rect.y -= 5
+        if mem == 2:
+            self.image = pygame.transform.rotate(self.orimage, 90)
+            self.r = 90
+            if self.rect.x > 475:
+                self.rect.x -= 5
+        if mem == 3:
+            self.image = pygame.transform.rotate(self.orimage, 180)
+            self.r = 180
+            if self.rect.y < 55 + 975 - 75:
+                self.rect.y += 5
+        if mem == 4:
+            self.image = pygame.transform.rotate(self.orimage, 270)
+            self.r = 270
+            if self.rect.x < 475 + 975 - 75:
+                self.rect.x += 5
+
+
+class shell(pygame.sprite.Sprite):
+    def __init__(self, x, y, r, *group):
+        super().__init__(*group)
+        self.image = load_image('снаряд.png')
+        self.image = pygame.transform.rotate(self.image, r)
+        self.r = r
+        self.orimage = self.image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.mem = 0
+
+    def update(self):
+        if self.rect.y > 55 and self.rect.x > 475 and self.rect.y < 55 + 975 - 6 and self.rect.x < 475 + 975 - 6 and self.mem == 0:
+            if self.r == 0:
+                self.rect.y -= 10
+            if self.r == 180:
+                self.rect.y += 10
+            if self.r == 90:
+                self.rect.x -= 10
+            if self.r == 270:
+                self.rect.x += 10
+        else:
+            if self.mem == 0:
+                self.image = load_image('взрыв.png')
+                self.rect.x -= 75 / 2
+                self.rect.y -= 75 / 2
+            self.mem += 1
+            if self.mem == 25:
+                self.kill()
+
+
 def tanks():
     # загрузка
     pygame.init()
@@ -61,20 +126,13 @@ def tanks():
     point = fpoints.readlines()
     f1 = pygame.font.Font(None, 50)
     ttext1 = f1.render(str(point[0][:6]), 0, (100, 100, 100))
-    f2 = pygame.font.Font(None, 50)
-    ttext2 = f2.render(str(point[1][:6]), 0, (100, 100, 100))
-    f3 = pygame.font.Font(None, 50)
-    ttext3 = f3.render(str(point[2][:6]), 0, (100, 100, 100))
-    f4 = pygame.font.Font(None, 50)
-    ttext4 = f4.render(str(point[3][:6]), 0, (100, 100, 100))
-    f5 = pygame.font.Font(None, 50)
-    ttext5 = f5.render(str(point[4][:6]), 0, (100, 100, 100))
-    f6 = pygame.font.Font(None, 50)
-    ttext6 = f6.render(str(point[5][:6]), 0, (100, 100, 100))
-    f7 = pygame.font.Font(None, 50)
-    ttext7 = f7.render(str(point[6][:6]), 0, (100, 100, 100))
-    f8 = pygame.font.Font(None, 50)
-    ttext8 = f8.render(str(point[7][:6]), 0, (100, 100, 100))
+    ttext2 = f1.render(str(point[1][:6]), 0, (100, 100, 100))
+    ttext3 = f1.render(str(point[2][:6]), 0, (100, 100, 100))
+    ttext4 = f1.render(str(point[3][:6]), 0, (100, 100, 100))
+    ttext5 = f1.render(str(point[4][:6]), 0, (100, 100, 100))
+    ttext6 = f1.render(str(point[5][:6]), 0, (100, 100, 100))
+    ttext7 = f1.render(str(point[6][:6]), 0, (100, 100, 100))
+    ttext8 = f1.render(str(point[7][:6]), 0, (100, 100, 100))
 
     p = pygame.sprite.Sprite()
     p.image = load_image('Танчики игрок0.png')
@@ -130,8 +188,7 @@ def tanks():
 
     f1 = pygame.font.Font(None, 60)
     text1 = f1.render('Денди Танчики', 0, (255, 0, 0))
-    f2 = pygame.font.Font(None, 60)
-    text2 = f2.render('Выберите танк', 0, (100, 100, 100))
+    text2 = f1.render('Выберите танк', 0, (100, 100, 100))
     v = True
     player = ''
     mem = 0
@@ -171,12 +228,10 @@ def tanks():
     # главное меню
     f1 = pygame.font.Font(None, 60)
     text1 = f1.render('Компания', 0, (255, 0, 0))
-    f2 = pygame.font.Font(None, 60)
-    text2 = f2.render('Создать свой уровень', 0, (255, 0, 0))
+    text2 = f1.render('Создать свой уровень', 0, (255, 0, 0))
     f3 = pygame.font.Font(None, 100)
     text3 = f3.render('Денди танчики', 0, (255, 0, 0))
-    f4 = pygame.font.Font(None, 60)
-    text4 = f4.render('Открыть свой уровень', 0, (255, 0, 0))
+    text4 = f1.render('Открыть свой уровень', 0, (255, 0, 0))
     f5 = pygame.font.Font(None, 50)
     text5 = f5.render(str(point[int(player)][:6]), 0, (100, 100, 100))
     ga = True
@@ -225,8 +280,11 @@ def tanks():
         print(3)
 
     # лвл1
-    f1 = pygame.font.Font(None, 100)
+    pla = pygame.sprite.Group()
+    сplayer(500, 500, pl, pla)
+    shells = pygame.sprite.Group()
     lives = 3
+    livesb = 3
     lvlpoints = 0
     li = pygame.sprite.Group()
     p = pygame.sprite.Sprite()
@@ -247,10 +305,39 @@ def tanks():
     p2.rect.x = 10
     p2.rect.y = 300
     li.add(p2)
+    #
+    lib = pygame.sprite.Group()
+    pb = pygame.sprite.Sprite()
+    pb.image = load_image('база.png')
+    pb.rect = s.image.get_rect()
+    pb.rect.x = 110
+    pb.rect.y = 100
+    lib.add(pb)
+    p1b = pygame.sprite.Sprite()
+    p1b.image = load_image('база.png')
+    p1b.rect = s.image.get_rect()
+    p1b.rect.x = 110
+    p1b.rect.y = 200
+    lib.add(p1b)
+    p2b = pygame.sprite.Sprite()
+    p2b.image = load_image('база.png')
+    p2b.rect = s.image.get_rect()
+    p2b.rect.x = 110
+    p2b.rect.y = 300
+    lib.add(p2b)
+    f1 = pygame.font.Font(None, 100)
     text1 = f1.render('Уровень: 1', 0, (255, 0, 0))
+    f2 = pygame.font.Font(None, 90)
     tgame = True
     while tgame:
         screen.fill((0, 0, 0))
+        t = str(lvlpoints)
+        while len(t) < 6:
+            t = '0' + t
+        text2 = f2.render('Очки: ' + t, 0, (100, 100, 100))
+        pygame.draw.rect(screen, (255, 127, 0), ((425, 5), (1075, 1075)))
+        pygame.draw.rect(screen, (0, 0, 0), ((475, 55), (975, 975)))
+        keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
@@ -258,7 +345,24 @@ def tanks():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return
+                    if event.key == pygame.K_SPACE:
+                        shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells)
+        if keys[pygame.K_SPACE] and keys[pygame.K_CAPSLOCK]:
+            shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells)
+        if keys[pygame.K_w]:
+            pla.update(1)
+        elif keys[pygame.K_a]:
+            pla.update(2)
+        elif keys[pygame.K_s]:
+            pla.update(3)
+        elif keys[pygame.K_d]:
+            pla.update(4)
+        shells.update()
         li.draw(screen)
+        lib.draw(screen)
+        pla.draw(screen)
+        shells.draw(screen)
         clock.tick(fps)
         screen.blit(text1, (0, 0))
+        screen.blit(text2, (1500, 0))
         pygame.display.flip()
