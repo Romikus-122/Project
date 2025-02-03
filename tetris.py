@@ -131,10 +131,11 @@ def tetris():
         coords = random.choice(shapes_coords)
         return [pygame.Rect(x + BWIDTH // 2, y - 2, 1, 1) for x, y in coords]
 
-    # Начальные фигура и следующая фигура
+    # начальные фигура и следующая фигура
     shape = new_shape()
-    shape_color = (random.choice(['white']))
+    shape_color = (random.choice(range(100, 200)), 0, random.choice(range(100, 200)))
     next_shape = new_shape()
+    next_shape_color = (random.choice(range(100, 200)), 0, random.choice(range(100, 200)))
 
     shape_rect = pygame.Rect(0, 0, CELL - 2, CELL - 2)
 
@@ -221,11 +222,13 @@ def tetris():
                         gameover = True
                         anim_speed = 0
                     else:
-                        field[block.y][block.x] = 'white'
+                        field[block.y][block.x] = shape_color
 
                 # генерируем следующую фигуру
                 shape = next_shape
+                shape_color = next_shape_color
                 next_shape = new_shape()
+                next_shape_color = (random.choice(range(100, 200)), 0, random.choice(range(100, 200)))
                 anim_limit = 2000
 
         grid_pos += 1
@@ -240,7 +243,7 @@ def tetris():
         for block in next_shape:
             shape_rect.x = LEFT + 1 + block.x * CELL + 1170 - LEFT
             shape_rect.y = TOP + 1 + block.y * CELL + 320
-            pygame.draw.rect(screen, 'white', shape_rect)
+            pygame.draw.rect(screen, next_shape_color, shape_rect)
 
         # рисуем текущую фигуру
         for block in shape:
