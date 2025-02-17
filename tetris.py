@@ -31,11 +31,15 @@ def draw_background(screen, grid_pos):
         pygame.draw.line(screen, (20, 0, 40), (3000 - 300 * i + grid_pos, 1080), (1920 - 300 * i + grid_pos, 0), 8)
 
         # дополнительные линии
-        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i + grid_pos + 20, 1080), (0 + 150 * i + grid_pos + 20, 0), 2)
-        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i + grid_pos + 20, 1080), (1920 - 150 * i + grid_pos + 20, 0), 2)
+        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i + grid_pos + 20, 1080), (0 + 150 * i + grid_pos + 20, 0),
+                         2)
+        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i + grid_pos + 20, 1080),
+                         (1920 - 150 * i + grid_pos + 20, 0), 2)
 
-        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i + grid_pos - 20, 1080), (0 + 150 * i + grid_pos - 20, 0), 2)
-        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i + grid_pos - 20, 1080), (1920 - 150 * i + grid_pos - 20, 0), 2)
+        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i + grid_pos - 20, 1080), (0 + 150 * i + grid_pos - 20, 0),
+                         2)
+        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i + grid_pos - 20, 1080),
+                         (1920 - 150 * i + grid_pos - 20, 0), 2)
 
         # вторая сетка (движется влево)
         # основные линии
@@ -43,11 +47,15 @@ def draw_background(screen, grid_pos):
         pygame.draw.line(screen, (20, 0, 40), (3000 - 300 * i - grid_pos, 1080), (1920 - 300 * i - grid_pos, 0), 8)
 
         # дополнительные линии
-        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i - grid_pos - 20, 1080), (0 + 150 * i - grid_pos - 20, 0), 2)
-        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i - grid_pos - 20, 1080), (1920 - 150 * i - grid_pos - 20, 0), 2)
+        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i - grid_pos - 20, 1080), (0 + 150 * i - grid_pos - 20, 0),
+                         2)
+        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i - grid_pos - 20, 1080),
+                         (1920 - 150 * i - grid_pos - 20, 0), 2)
 
-        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i - grid_pos + 20, 1080), (0 + 150 * i - grid_pos + 20, 0), 2)
-        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i - grid_pos + 20, 1080), (1920 - 150 * i - grid_pos + 20, 0), 2)
+        pygame.draw.line(screen, (20, 0, 40), (-1080 + 150 * i - grid_pos + 20, 1080), (0 + 150 * i - grid_pos + 20, 0),
+                         2)
+        pygame.draw.line(screen, (20, 0, 40), (3000 - 150 * i - grid_pos + 20, 1080),
+                         (1920 - 150 * i - grid_pos + 20, 0), 2)
 
 
 def draw_board(screen, board):
@@ -93,6 +101,7 @@ def draw_pause(screen):
     screen.blit(pause_text, (LEFT + 20, TOP + 20))
     screen.blit(pause_text2, (LEFT + 20, TOP + 120))
 
+
 def draw_gameover(screen):
     pygame.draw.rect(screen, (5, 0, 10), ((LEFT, TOP), (CELL * 10, CELL * 18)))
     f3 = pygame.font.Font('data/long_pixel-7.ttf', 80)
@@ -117,13 +126,13 @@ def tetris():
 
     # координаты фигур (относительно центра вращения)
     shapes_coords = [
-        [(-1, 0), (-2, 0), (0, 0), (1, 0)],         # I-образная
-        [(0, -1), (-1, -1), (-1, 0), (0, 0)],         # квадрат
-        [(-1, 0), (-1, 1), (0, 0), (0, -1)],           # S-образная
-        [(0, 0), (-1, 0), (0, 1), (-1, -1)],           # обратная S
-        [(0, 0), (0, -1), (0, 1), (-1, -1)],           # Г-образная
-        [(0, 0), (0, -1), (0, 1), (1, -1)],            # обратная Г
-        [(0, 0), (0, -1), (0, 1), (-1, 0)]             # T-образная
+        [(-1, 0), (-2, 0), (0, 0), (1, 0)],  # I-образная
+        [(0, -1), (-1, -1), (-1, 0), (0, 0)],  # квадрат
+        [(-1, 0), (-1, 1), (0, 0), (0, -1)],  # S-образная
+        [(0, 0), (-1, 0), (0, 1), (-1, -1)],  # обратная S
+        [(0, 0), (0, -1), (0, 1), (-1, -1)],  # Г-образная
+        [(0, 0), (0, -1), (0, 1), (1, -1)],  # обратная Г
+        [(0, 0), (0, -1), (0, 1), (-1, 0)]  # T-образная
     ]
 
     # функция для создания новой фигуры
@@ -146,6 +155,7 @@ def tetris():
     grid_pos = 0
     paused = False
     gameover = False
+    rotate = False
     normal_anim_speed = anim_speed
 
     running = True
@@ -172,6 +182,8 @@ def tetris():
                         paused = False
                 elif event.key == pygame.K_x:
                     return
+                elif event.key == pygame.K_r:
+                    rotate = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     anim_limit = 2000
@@ -184,7 +196,7 @@ def tetris():
                 block.x += movex
             valid = True
             for block in moved:
-                # проверяем наа выход за границы
+                # проверяем на выход за границы
                 if block.x < 0 or block.x >= BWIDTH:
                     valid = False
                     break
@@ -195,6 +207,32 @@ def tetris():
             if valid:
                 for block in shape:
                     block.x += movex
+
+        # вращение
+        center = shape[0]
+        old_shape = shape.copy()
+        if rotate:
+            for i in range(4):
+                x = shape[i].y - center.y
+                y = shape[i].x - center.x
+                shape[i].x = center.x - x
+                shape[i].y = center.y + y
+            validd = True
+            for block in shape:
+                # проверяем на выход за границы
+                if block.x < 0 or block.x >= BWIDTH:
+                    validd = False
+                    break
+                if block.y < 0 or block.y >= BHEIGHT:
+                    validd = False
+                    break
+                # проверяем на контакт с другими фигурами
+                if field[block.y][block.x]:
+                    validd = False
+                    break
+            if not validd:
+                shape = old_shape.copy()
+            rotate = False
 
         # вертикальное перемещение
         anim_count += anim_speed
@@ -267,7 +305,6 @@ def tetris():
             if flag:
                 field.remove(field[y])
                 field.insert(0, [0] * BWIDTH)
-
 
         if paused:
             draw_pause(screen)
