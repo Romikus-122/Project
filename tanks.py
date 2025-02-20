@@ -4,6 +4,9 @@ import random
 
 import pygame
 
+lives = 3
+livesb = 3
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -43,7 +46,7 @@ class Cplayer(pygame.sprite.Sprite):
         self.rect.y = y
         self.br = br
 
-    def update(self, mem):
+    def update(self, mem, shells):
         if mem == 1:
             self.image = pygame.transform.rotate(self.orimage, 0)
             self.r = 0
@@ -72,6 +75,71 @@ class Cplayer(pygame.sprite.Sprite):
                 self.rect.x += 5
             if pygame.sprite.spritecollideany(self, self.br):
                 self.rect.x -= 5
+        if pygame.sprite.spritecollideany(self, shells):
+            self.kill()
+
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y, p, group, br):
+        super().__init__(group)
+        self.image = load_image(p)
+        self.orimage = self.image
+        self.r = 0
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.br = br
+        self.mem = 2
+        self.mem1 = 20
+
+    def update(self, shells):
+        if self.mem1 != 0:
+            if self.mem == 1:
+                self.image = pygame.transform.rotate(self.orimage, 0)
+                self.r = 0
+                if self.rect.y > 55:
+                    self.rect.y -= 5
+                if pygame.sprite.spritecollideany(self, self.br):
+                    self.rect.y += 5
+                    self.mem = random.randint(1, 4)
+            if self.mem == 2:
+                self.image = pygame.transform.rotate(self.orimage, 90)
+                self.r = 90
+                if self.rect.x > 475:
+                    self.rect.x -= 5
+                else:
+                    self.mem = random.randint(1, 4)
+                if pygame.sprite.spritecollideany(self, self.br):
+                    self.rect.x += 5
+                    self.mem = random.randint(1, 4)
+            if self.mem == 3:
+                self.image = pygame.transform.rotate(self.orimage, 180)
+                self.r = 180
+                if self.rect.y < 55 + 975 - 75:
+                    self.rect.y += 5
+                else:
+                    self.mem = random.randint(1, 4)
+                if pygame.sprite.spritecollideany(self, self.br):
+                    self.rect.y -= 5
+                    self.mem = random.randint(1, 4)
+            if self.mem == 4:
+                self.image = pygame.transform.rotate(self.orimage, 270)
+                self.r = 270
+                if self.rect.x < 475 + 975 - 75:
+                    self.rect.x += 5
+                else:
+                    self.mem = random.randint(1, 4)
+                if pygame.sprite.spritecollideany(self, self.br):
+                    self.rect.x -= 5
+                    self.mem = random.randint(1, 4)
+            self.mem1 -= 1
+        else:
+            self.mem = random.randint(1, 4)
+            self.mem1 = random.randint(20, 100)
+        if pygame.sprite.spritecollideany(self, shells):
+            global lvlpoints
+            lvlpoints += 10
+            self.kill()
 
 
 class Shell(pygame.sprite.Sprite):
@@ -88,7 +156,7 @@ class Shell(pygame.sprite.Sprite):
         self.br = br
         self.t = True
 
-    def update(self):
+    def update(self, enem):
         if self.rect.y > 55 and self.rect.x > 475 and self.rect.y < 55 + 975 - 6 and self.rect.x < 475 + 975 - 6 and self.mem == 0 and self.t:
             if self.r == 0:
                 self.rect.y -= 10
@@ -115,6 +183,52 @@ class Shell(pygame.sprite.Sprite):
             self.mem += 1
             if self.mem == 25:
                 self.kill()
+        if pygame.sprite.spritecollideany(self, enem):
+            self.t = False
+
+class Shellenem(pygame.sprite.Sprite):
+    def __init__(self, x, y, r, group, br):
+        super().__init__(group)
+        self.image = load_image('снаряд.png')
+        self.image = pygame.transform.rotate(self.image, r)
+        self.r = r
+        self.orimage = self.image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.mem = 0
+        self.br = br
+        self.t = True
+
+    def update(self, pla):
+        if self.rect.y > 55 and self.rect.x > 475 and self.rect.y < 55 + 975 - 6 and self.rect.x < 475 + 975 - 6 and self.mem == 0 and self.t:
+            if self.r == 0:
+                self.rect.y -= 10
+            if self.r == 180:
+                self.rect.y += 10
+            if self.r == 90:
+                self.rect.x -= 10
+            if self.r == 270:
+                self.rect.x += 10
+        else:
+            if self.mem == 0:
+                self.image = load_image('взрыв.png')
+                self.rect.x -= 75 / 2
+                self.rect.y -= 75 / 2
+            self.mem += 1
+            if self.mem == 25:
+                self.kill()
+        if pygame.sprite.spritecollideany(self, self.br):
+            self.t = False
+            if self.mem == 0:
+                self.image = load_image('взрыв.png')
+                self.rect.x -= 75 / 2
+                self.rect.y -= 75 / 2
+            self.mem += 1
+            if self.mem == 25:
+                self.kill()
+        if pygame.sprite.spritecollideany(self, pla):
+            self.t = False
 
 
 class Spr(pygame.sprite.Sprite):
@@ -288,9 +402,12 @@ def tanks():
     # лвл1
     pla = pygame.sprite.Group()
     bri = pygame.sprite.Group()
+    enem = pygame.sprite.Group()
     shells = pygame.sprite.Group()
+    shellsenem = pygame.sprite.Group()
     lives = 3
     livesb = 3
+    global lvlpoints
     lvlpoints = 0
     li = pygame.sprite.Group()
     p = pygame.sprite.Sprite()
@@ -322,6 +439,8 @@ def tanks():
                 pass
             elif x[i1] == 'X':
                 Brick(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'стена.png', bri)
+            elif x[i1] == 'V':
+                Enemy(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'Танчики враг.png', enem, bri)
     for i in mem:
         Cplayer(*i, pl, pla, bri)
     while tgame:
@@ -342,22 +461,34 @@ def tanks():
                         return
                     if event.key == pygame.K_SPACE:
                         Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
+                    if event.key == pygame.K_r:
+                        pass
+                        # рестарт лвла
         if keys[pygame.K_SPACE] and keys[pygame.K_CAPSLOCK]:
-            Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells)
+            Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
         if keys[pygame.K_w]:
-            pla.update(1)
+            pla.update(1, shellsenem)
         elif keys[pygame.K_a]:
-            pla.update(2)
+            pla.update(2, shellsenem)
         elif keys[pygame.K_s]:
-            pla.update(3)
+            pla.update(3, shellsenem)
         elif keys[pygame.K_d]:
-            pla.update(4)
-        shells.update()
+            pla.update(4, shellsenem)
+        for i in enem:
+            s = random.randint(1, 100)
+            if s <= 2:
+                Shellenem(i.rect[0] + 35, i.rect[1] + 35, i.r, shellsenem, bri)
+        shells.update(enem)
+        shellsenem.update(pla)
+        pla.update(0, shellsenem)
+        enem.update(shells)
         bri.draw(screen)
         li.draw(screen)
         lib.draw(screen)
         pla.draw(screen)
+        enem.draw(screen)
         shells.draw(screen)
+        shellsenem.draw(screen)
         clock.tick(fps)
         screen.blit(text1, (0, 0))
         screen.blit(text2, (1500, 0))
