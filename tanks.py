@@ -33,14 +33,15 @@ class Obv(pygame.sprite.Sprite):
 
 
 class Cplayer(pygame.sprite.Sprite):
-    def __init__(self, x, y, p, *group):
-        super().__init__(*group)
+    def __init__(self, x, y, p, group, br):
+        super().__init__(group)
         self.image = load_image(p)
         self.orimage = self.image
         self.r = 0
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.br = br
 
     def update(self, mem):
         if mem == 1:
@@ -48,26 +49,34 @@ class Cplayer(pygame.sprite.Sprite):
             self.r = 0
             if self.rect.y > 55:
                 self.rect.y -= 5
+            if pygame.sprite.spritecollideany(self, self.br):
+                self.rect.y += 5
         if mem == 2:
             self.image = pygame.transform.rotate(self.orimage, 90)
             self.r = 90
             if self.rect.x > 475:
                 self.rect.x -= 5
+            if pygame.sprite.spritecollideany(self, self.br):
+                self.rect.x += 5
         if mem == 3:
             self.image = pygame.transform.rotate(self.orimage, 180)
             self.r = 180
             if self.rect.y < 55 + 975 - 75:
                 self.rect.y += 5
+            if pygame.sprite.spritecollideany(self, self.br):
+                self.rect.y -= 5
         if mem == 4:
             self.image = pygame.transform.rotate(self.orimage, 270)
             self.r = 270
             if self.rect.x < 475 + 975 - 75:
                 self.rect.x += 5
+            if pygame.sprite.spritecollideany(self, self.br):
+                self.rect.x -= 5
 
 
 class Shell(pygame.sprite.Sprite):
-    def __init__(self, x, y, r, *group):
-        super().__init__(*group)
+    def __init__(self, x, y, r, group, br):
+        super().__init__(group)
         self.image = load_image('снаряд.png')
         self.image = pygame.transform.rotate(self.image, r)
         self.r = r
@@ -76,9 +85,11 @@ class Shell(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.mem = 0
+        self.br = br
+        self.t = True
 
     def update(self):
-        if self.rect.y > 55 and self.rect.x > 475 and self.rect.y < 55 + 975 - 6 and self.rect.x < 475 + 975 - 6 and self.mem == 0:
+        if self.rect.y > 55 and self.rect.x > 475 and self.rect.y < 55 + 975 - 6 and self.rect.x < 475 + 975 - 6 and self.mem == 0 and self.t:
             if self.r == 0:
                 self.rect.y -= 10
             if self.r == 180:
@@ -88,6 +99,15 @@ class Shell(pygame.sprite.Sprite):
             if self.r == 270:
                 self.rect.x += 10
         else:
+            if self.mem == 0:
+                self.image = load_image('взрыв.png')
+                self.rect.x -= 75 / 2
+                self.rect.y -= 75 / 2
+            self.mem += 1
+            if self.mem == 25:
+                self.kill()
+        if pygame.sprite.spritecollideany(self, self.br):
+            self.t = False
             if self.mem == 0:
                 self.image = load_image('взрыв.png')
                 self.rect.x -= 75 / 2
@@ -288,6 +308,7 @@ def tanks():
     tgame = True
     lvlxy = [475, 55, 975, 975]
     lvlform = open(os.path.join('lvls', 'lvl1'), 'r')
+    mem = []
     for i in range(1, 15):
         x = lvlform.readline()
         print(x, i)
@@ -296,11 +317,13 @@ def tanks():
             if x[i1] == '0':
                 continue
             elif x[i1] == 'P':
-                Cplayer(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, pl, pla)
+                mem.append((lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75))
             elif x[i1] == 'B':
                 pass
             elif x[i1] == 'X':
                 Brick(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'стена.png', bri)
+    for i in mem:
+        Cplayer(*i, pl, pla, bri)
     while tgame:
         screen.fill((0, 0, 0))
         t = str(lvlpoints)
@@ -318,7 +341,7 @@ def tanks():
                     if event.key == pygame.K_ESCAPE:
                         return
                     if event.key == pygame.K_SPACE:
-                        Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells)
+                        Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
         if keys[pygame.K_SPACE] and keys[pygame.K_CAPSLOCK]:
             Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells)
         if keys[pygame.K_w]:
