@@ -184,8 +184,11 @@ def tetris():
                     return
                 elif event.key == pygame.K_r:
                     rotate = True
+                    if shape[0] == (0, -1):
+                        rotate = False
+                        print(rotate)
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     anim_limit = 2000
 
         # горизонтальное перемещение
@@ -210,28 +213,25 @@ def tetris():
 
         # вращение
         center = shape[0]
-        old_shape = shape.copy()
-        if rotate:
+        rotated = shape.copy()
+        if rotate and center != (0, -1):
             for i in range(4):
                 x = shape[i].y - center.y
                 y = shape[i].x - center.x
-                shape[i].x = center.x - x
-                shape[i].y = center.y + y
+                rotated[i].x = center.x - x
+                rotated[i].y = center.y + y
             validd = True
-            for block in shape:
+            for block in rotated:
                 # проверяем на выход за границы
                 if block.x < 0 or block.x >= BWIDTH:
                     validd = False
                     break
-                if block.y < 0 or block.y >= BHEIGHT:
-                    validd = False
-                    break
                 # проверяем на контакт с другими фигурами
-                if field[block.y][block.x]:
+                if block.y >= 0 and field[block.y][block.x]:
                     validd = False
                     break
-            if not validd:
-                shape = old_shape.copy()
+            if validd:
+                shape = rotated
             rotate = False
 
         # вертикальное перемещение
@@ -261,6 +261,7 @@ def tetris():
                         anim_speed = 0
                     else:
                         field[block.y][block.x] = shape_color
+                score += 10
 
                 # генерируем следующую фигуру
                 shape = next_shape
@@ -305,6 +306,7 @@ def tetris():
             if flag:
                 field.remove(field[y])
                 field.insert(0, [0] * BWIDTH)
+                score += 100
 
         if paused:
             draw_pause(screen)
