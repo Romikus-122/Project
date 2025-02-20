@@ -300,7 +300,7 @@ def tanks():
             elif x[i1] == 'B':
                 pass
             elif x[i1] == 'X':
-                Brick(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'база.png', bri)
+                Brick(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'стена.png', bri)
     while tgame:
         screen.fill((0, 0, 0))
         t = str(lvlpoints)
