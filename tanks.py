@@ -6,6 +6,7 @@ import pygame
 
 lives = 3
 livesb = 3
+lvl = 0
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -172,7 +173,7 @@ class Shell(pygame.sprite.Sprite):
                 self.rect.x -= 75 / 2
                 self.rect.y -= 75 / 2
             self.mem += 1
-            if self.mem == 25:
+            if self.mem == 10:
                 self.kill()
         if pygame.sprite.spritecollideany(self, self.br):
             self.t = False
@@ -181,7 +182,7 @@ class Shell(pygame.sprite.Sprite):
                 self.rect.x -= 75 / 2
                 self.rect.y -= 75 / 2
             self.mem += 1
-            if self.mem == 25:
+            if self.mem == 10:
                 self.kill()
         if pygame.sprite.spritecollideany(self, enem):
             self.t = False
@@ -216,7 +217,7 @@ class Shellenem(pygame.sprite.Sprite):
                 self.rect.x -= 75 / 2
                 self.rect.y -= 75 / 2
             self.mem += 1
-            if self.mem == 25:
+            if self.mem == 10:
                 self.kill()
         if pygame.sprite.spritecollideany(self, self.br):
             self.t = False
@@ -225,7 +226,7 @@ class Shellenem(pygame.sprite.Sprite):
                 self.rect.x -= 75 / 2
                 self.rect.y -= 75 / 2
             self.mem += 1
-            if self.mem == 25:
+            if self.mem == 10:
                 self.kill()
         if pygame.sprite.spritecollideany(self, pla):
             self.t = False
@@ -391,15 +392,16 @@ def tanks():
         clock.tick(fps)
         pygame.display.flip()
     if mem == 0:
-        print(1)
+        lvl = 1
+        lvles(lvl, pl, screen, fps)
     if mem == 1:
         print(2)
     if mem == 2:
         print(3)
 
 
-
-    # лвл1
+def lvles(lvl, pl, screen, fps):
+    clock = pygame.time.Clock()
     pla = pygame.sprite.Group()
     bri = pygame.sprite.Group()
     enem = pygame.sprite.Group()
@@ -420,11 +422,11 @@ def tanks():
     Spr(110, 200, 'база.png', lib)
     Spr(110, 300, 'база.png', lib)
     f1 = pygame.font.Font(None, 100)
-    text1 = f1.render('Уровень: 1', 0, (255, 0, 0))
+    text1 = f1.render('Уровень: ' + str(lvl), 0, (255, 0, 0))
     f2 = pygame.font.Font(None, 90)
     tgame = True
     lvlxy = [475, 55, 975, 975]
-    lvlform = open(os.path.join('lvls', 'lvl1'), 'r')
+    lvlform = open(os.path.join('lvls', 'lvl' + str(lvl)), 'r')
     mem = []
     for i in range(1, 15):
         x = lvlform.readline()
@@ -462,8 +464,17 @@ def tanks():
                     if event.key == pygame.K_SPACE:
                         Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
                     if event.key == pygame.K_r:
-                        pass
-                        # рестарт лвла
+                        return lvles(lvl, pl, screen, fps)
+        if len(pla) == 0:
+            for i in li:
+                li.remove(i)
+                break
+            lives -= 1
+            if lives > 0:
+                for i in mem:
+                    Cplayer(*i, pl, pla, bri)
+            else:
+                break
         if keys[pygame.K_SPACE] and keys[pygame.K_CAPSLOCK]:
             Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
         if keys[pygame.K_w]:
