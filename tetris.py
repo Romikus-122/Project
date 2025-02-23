@@ -65,7 +65,7 @@ def draw_board(screen, board):
     pygame.draw.rect(screen, "white", ((LEFT - 15, TOP - 15), (CELL * 10 + 30, CELL * 18 + 30)), 5)
 
 
-def draw_text(screen, best, score):
+def draw_text(screen, best, score, level):
     left = 800
     right = 1220
     f1 = pygame.font.Font('data/LCD5x8HRU.ttf', 100)
@@ -79,9 +79,10 @@ def draw_text(screen, best, score):
     pause_text2 = f2.render('нажмите кнопку P (англ.)', True, "white")
     exit_text1 = f2.render('Чтобы выйти из игры', True, "white")
     exit_text2 = f2.render('нажмите кнопку X (англ.)', True, "white")
+    level_text = f2.render(f'Уровень: {level}', True, "white")
 
-    pygame.draw.rect(screen, (5, 0, 10), ((1200, 250), (400, 600)))
-    pygame.draw.rect(screen, "white", ((1200, 250), (400, 600)), 2)
+    pygame.draw.rect(screen, (5, 0, 10), ((1200, 250), (400, 650)))
+    pygame.draw.rect(screen, "white", ((1200, 250), (400, 650)), 2)
 
     screen.blit(header, (left - 50, 125))
     screen.blit(best_score, (right, 270))
@@ -91,6 +92,7 @@ def draw_text(screen, best, score):
     screen.blit(pause_text2, (right, 700))
     screen.blit(exit_text1, (right, 760))
     screen.blit(exit_text2, (right, 810))
+    screen.blit(level_text, (right, 860))
 
 
 def draw_pause(screen):
@@ -142,21 +144,26 @@ def tetris():
 
     # начальные фигура и следующая фигура
     shape = new_shape()
-    shape_color = (random.choice(range(100, 200)), 0, random.choice(range(100, 200)))
+    shape_color = (random.choice(range(50, 255)), 0, random.choice(range(50, 255)))
     next_shape = new_shape()
-    next_shape_color = (random.choice(range(100, 200)), 0, random.choice(range(100, 200)))
+    next_shape_color = (random.choice(range(100, 255)), 0, random.choice(range(50, 100)))
 
     shape_rect = pygame.Rect(0, 0, CELL - 2, CELL - 2)
 
-    anim_count, anim_speed, anim_limit = 0, 60, 2000
+    anim_count, anim_speed, anim_limit= 0, 30, 2000
+    standard_anim_limit = anim_limit
 
     score = 0
-    best = 0
+    bf109 = open('data/Рекорд', mode='r', encoding='utf-8')
+    best = int(bf109.readline(52))
+    bf109.close()
     grid_pos = 0
     paused = False
     gameover = False
     rotate = False
     normal_anim_speed = anim_speed
+    counter = 0
+    level = 1
 
     running = True
     while running:
@@ -171,7 +178,7 @@ def tetris():
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     movex = 1
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    anim_limit = 500  # ускоряем падение
+                    anim_limit = standard_anim_limit // 8  # ускоряем падение
                 elif event.key == pygame.K_p:
                     if not paused:
                         normal_anim_speed = anim_speed
@@ -182,14 +189,14 @@ def tetris():
                         paused = False
                 elif event.key == pygame.K_x:
                     return
-                elif event.key == pygame.K_r:
+                elif event.key == pygame.K_UP:
                     rotate = True
                     if shape[0] == (0, -1):
                         rotate = False
                         print(rotate)
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    anim_limit = 2000
+                    anim_limit = standard_anim_limit
 
         # горизонтальное перемещение
         if movex:
@@ -213,7 +220,7 @@ def tetris():
 
         # вращение
         center = shape[0]
-        rotated = shape.copy()
+        rotated = [block.copy() for block in shape]
         if rotate and center != (0, -1):
             for i in range(4):
                 x = shape[i].y - center.y
@@ -254,14 +261,20 @@ def tetris():
                 for block in shape:
                     block.y -= 1
                 # Фиксируем фигуру в поле
+                score += 10
                 for block in shape:
                     if block.y < 0:
                         # Если фигура зафиксировалась вне поля – игра окончена
                         gameover = True
                         anim_speed = 0
+                        score -= 10
+                        if score > best:
+                            best = score
+                            bf109 = open('data/Рекорд', mode='w')
+                            bf109.write(str(score))
+                            bf109.close()
                     else:
                         field[block.y][block.x] = shape_color
-                score += 10
 
                 # генерируем следующую фигуру
                 shape = next_shape
@@ -276,7 +289,7 @@ def tetris():
 
         draw_background(screen, grid_pos)
         draw_board(screen, board)
-        draw_text(screen, best, score)
+        draw_text(screen, best, score, level)
 
         # рисуем следующую фигуру
         for block in next_shape:
@@ -297,6 +310,7 @@ def tetris():
                 if col:
                     pygame.draw.rect(screen, col, ((LEFT + CELL * x + 1, TOP + CELL * y + 1), (CELL - 2, CELL - 2)))
 
+        # удаляем собранный ряд
         for y, row in enumerate(field):
             flag = True
             for cell in row:
@@ -307,6 +321,11 @@ def tetris():
                 field.remove(field[y])
                 field.insert(0, [0] * BWIDTH)
                 score += 100
+                counter += 1
+                if counter >= 5 and level <= 15:
+                    counter = 0
+                    level += 1
+                    anim_speed *= 1.3
 
         if paused:
             draw_pause(screen)
