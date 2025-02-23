@@ -310,6 +310,8 @@ def tanks():
     f1 = pygame.font.Font(None, 60)
     text1 = f1.render('Денди Танчики', 0, (255, 0, 0))
     text2 = f1.render('Выберите танк', 0, (100, 100, 100))
+    text3 = f1.render('E для подтверждения', 0, (100, 100, 100))
+    text4 = f1.render('W, S для выбора', 0, (100, 100, 100))
     v = True
     player = ''
     mem = 0
@@ -334,6 +336,8 @@ def tanks():
         clock.tick(fps)
         screen.blit(text1, (500, 200))
         screen.blit(text2, (500, 300))
+        screen.blit(text3, (1000, 200))
+        screen.blit(text4, (1000, 300))
         screen.blit(ttext1, (600, 350))
         screen.blit(ttext2, (600, 425))
         screen.blit(ttext3, (600, 500))
@@ -403,6 +407,7 @@ def tanks():
 def lvles(lvl, pl, screen, fps):
     clock = pygame.time.Clock()
     pla = pygame.sprite.Group()
+    base = pygame.sprite.Group()
     bri = pygame.sprite.Group()
     enem = pygame.sprite.Group()
     shells = pygame.sprite.Group()
@@ -427,6 +432,9 @@ def lvles(lvl, pl, screen, fps):
     tgame = True
     lvlxy = [475, 55, 975, 975]
     lvlform = open(os.path.join('lvls', 'lvl' + str(lvl)), 'r')
+    f3 = pygame.font.Font(None, 50)
+    text3 = f3.render('Spase для стрельбы', 0, (100, 100, 100))
+    text4 = f3.render('WASD для движения', 0, (100, 100, 100))
     mem = []
     for i in range(1, 15):
         x = lvlform.readline()
@@ -438,7 +446,7 @@ def lvles(lvl, pl, screen, fps):
             elif x[i1] == 'P':
                 mem.append((lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75))
             elif x[i1] == 'B':
-                pass
+                Spr(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'база.png', base)
             elif x[i1] == 'X':
                 Brick(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'стена.png', bri)
             elif x[i1] == 'V':
@@ -474,7 +482,11 @@ def lvles(lvl, pl, screen, fps):
                 for i in mem:
                     Cplayer(*i, pl, pla, bri)
             else:
-                break
+                pass
+                # Пройгрыш
+        if len(enem) == 0:
+            pass
+            # Победа
         if keys[pygame.K_SPACE] and keys[pygame.K_CAPSLOCK]:
             Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
         if keys[pygame.K_w]:
@@ -500,8 +512,11 @@ def lvles(lvl, pl, screen, fps):
         enem.draw(screen)
         shells.draw(screen)
         shellsenem.draw(screen)
+        base.draw(screen)
         clock.tick(fps)
         screen.blit(text1, (0, 0))
         screen.blit(text2, (1500, 0))
+        screen.blit(text3, (1500, 100))
+        screen.blit(text4, (1500, 200))
         clock.tick(fps)
         pygame.display.flip()
