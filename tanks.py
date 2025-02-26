@@ -182,7 +182,7 @@ class Shell(pygame.sprite.Sprite):
             self.mem += 1
             if self.mem == 10:
                 self.kill()
-        if pygame.sprite.spritecollideany(self, self.br):
+        if pygame.sprite.spritecollideany(self, self.br) and self.t == True:
             self.t = False
             if self.mem == 0:
                 self.image = load_image('взрыв.png')
@@ -191,7 +191,7 @@ class Shell(pygame.sprite.Sprite):
             self.mem += 1
             if self.mem == 10:
                 self.kill()
-        if pygame.sprite.spritecollideany(self, enem):
+        if pygame.sprite.spritecollideany(self, enem) and self.t == True:
             self.t = False
 
 class Shellenem(pygame.sprite.Sprite):
@@ -226,7 +226,7 @@ class Shellenem(pygame.sprite.Sprite):
             self.mem += 1
             if self.mem == 10:
                 self.kill()
-        if pygame.sprite.spritecollideany(self, self.br):
+        if pygame.sprite.spritecollideany(self, self.br) and self.t == True:
             self.t = False
             if self.mem == 0:
                 self.image = load_image('взрыв.png')
@@ -235,7 +235,7 @@ class Shellenem(pygame.sprite.Sprite):
             self.mem += 1
             if self.mem == 10:
                 self.kill()
-        if pygame.sprite.spritecollideany(self, pla) or pygame.sprite.spritecollideany(self, b):
+        if (pygame.sprite.spritecollideany(self, pla) or pygame.sprite.spritecollideany(self, b)) and self.t == True:
             self.t = False
 
 
@@ -552,6 +552,7 @@ def lvles(lvl, pl, screen, fps):
     bush = pygame.sprite.Group()
     bri = pygame.sprite.Group()
     enem = pygame.sprite.Group()
+    enems = pygame.sprite.Group()
     shells = pygame.sprite.Group()
     shellsenem = pygame.sprite.Group()
     lives = 3
@@ -600,6 +601,7 @@ def lvles(lvl, pl, screen, fps):
             elif x[i1] == 'X':
                 Spr(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'стена.png', bri)
             elif x[i1] == 'V':
+                Spr(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'завод.png', enems)
                 mem1.append((lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75))
             elif x[i1] == '#':
                 Spr(lvlxy[0] + i1 * 75, lvlxy[1] + (i - 2) * 75, 'куст.png', bush)
@@ -684,6 +686,7 @@ def lvles(lvl, pl, screen, fps):
                 else:
                     ti += 1
         base.draw(screen)
+        enems.draw(screen)
         bri.draw(screen)
         li.draw(screen)
         lib.draw(screen)
