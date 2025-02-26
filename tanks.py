@@ -6,7 +6,10 @@ import pygame
 
 lives = 3
 livesb = 3
-lvl = 0
+lvl = 1
+pointsp = 0
+point = []
+player = ''
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -82,7 +85,6 @@ class Cplayer(pygame.sprite.Sprite):
         if self.time != 0:
             self.time -= 1
 
-
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, p, group, br):
         super().__init__(group)
@@ -93,8 +95,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.br = br
-        self.mem = 2
-        self.mem1 = 20
+        self.mem = 3
+        self.mem1 = 30
 
     def update(self, shells):
         if self.mem1 != 0:
@@ -103,6 +105,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.r = 0
                 if self.rect.y > 55:
                     self.rect.y -= 5
+                else:
+                    self.mem = random.randint(1, 4)
                 if pygame.sprite.spritecollideany(self, self.br):
                     self.rect.y += 5
                     self.mem = random.randint(1, 4)
@@ -139,7 +143,7 @@ class Enemy(pygame.sprite.Sprite):
             self.mem1 -= 1
         else:
             self.mem = random.randint(1, 4)
-            self.mem1 = random.randint(20, 100)
+            self.mem1 = random.randint(15, 120)
         if pygame.sprite.spritecollideany(self, shells):
             global lvlpoints
             lvlpoints += 10
@@ -204,7 +208,7 @@ class Shellenem(pygame.sprite.Sprite):
         self.br = br
         self.t = True
 
-    def update(self, pla):
+    def update(self, pla, b):
         if self.rect.y > 55 and self.rect.x > 475 and self.rect.y < 55 + 975 - 6 and self.rect.x < 475 + 975 - 6 and self.mem == 0 and self.t:
             if self.r == 0:
                 self.rect.y -= 10
@@ -231,7 +235,7 @@ class Shellenem(pygame.sprite.Sprite):
             self.mem += 1
             if self.mem == 10:
                 self.kill()
-        if pygame.sprite.spritecollideany(self, pla):
+        if pygame.sprite.spritecollideany(self, pla) or pygame.sprite.spritecollideany(self, b):
             self.t = False
 
 
@@ -293,7 +297,11 @@ def tanks():
     s.rect.y = 180
     sg.add(s)
     fpoints = open('points')
-    point = fpoints.readlines()
+    global point
+    poi = fpoints.readlines()
+    for i in poi:
+        point.append(i[:6])
+    fpoints.close()
     f1 = pygame.font.Font(None, 50)
     ttext1 = f1.render(str(point[0][:6]), 0, (100, 100, 100))
     ttext2 = f1.render(str(point[1][:6]), 0, (100, 100, 100))
@@ -322,6 +330,7 @@ def tanks():
     text3 = f1.render('E для подтверждения', 0, (100, 100, 100))
     text4 = f1.render('W, S для выбора', 0, (100, 100, 100))
     v = True
+    global player
     player = ''
     mem = 0
     while v:
@@ -368,7 +377,8 @@ def tanks():
     text3 = f3.render('Денди танчики', 0, (255, 0, 0))
     text4 = f1.render('Открыть свой уровень', 0, (255, 0, 0))
     f5 = pygame.font.Font(None, 50)
-    text5 = f5.render(str(point[int(player)][:6]), 0, (100, 100, 100))
+    global pointsp
+    pointsp = int(point[int(player)][:6])
     ga = True
     gamep = pygame.sprite.Group()
     Spr(0, 0, 'Танчики игрок' + player + '.png', gamep)
@@ -378,6 +388,7 @@ def tanks():
     Obv(490, 275, g)
     while ga:
         screen.fill((0, 0, 0))
+        text5 = f5.render(str(point[int(player)][:6]), 0, (100, 100, 100))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
@@ -393,7 +404,36 @@ def tanks():
                             mem -= 1
                     g.update(mem * 100 + 275)
                     if event.key == pygame.K_e and mem == 0: #проверка выбора режима (только компания) !!! доработать
+                        global lvl
                         lvl = 1
+                        trt = True
+                        ff1 = pygame.font.Font(None, 100)
+                        ff2 = pygame.font.Font(None, 50)
+                        textt2 = ff2.render('нажмите W чтобы увеличить уровень', 0, (82, 82, 82))
+                        textt3 = ff2.render('нажмите S чтобы уменьшить уровень', 0, (82, 82, 82))
+                        while trt:
+                            screen.fill((0, 0, 0))
+                            textt1 = ff1.render('Выбранный уровень: ' + str(lvl), 0, (255, 0, 0))
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    return
+                                if event.type == pygame.KEYDOWN:
+                                    if event.type == pygame.KEYDOWN:
+                                        if event.key == pygame.K_ESCAPE:
+                                            return
+                                        if event.key == pygame.K_e:
+                                            trt = False
+                                        if event.key == pygame.K_w:
+                                            if lvl < 5:
+                                                lvl += 1
+                                        if event.key == pygame.K_s:
+                                            if lvl > 1:
+                                                lvl -= 1
+                            screen.blit(textt1, (500, 300))
+                            screen.blit(textt2, (500, 500))
+                            screen.blit(textt3, (500, 550))
+                            clock.tick(fps)
+                            pygame.display.flip()
                         lvles(lvl, pl, screen, fps)
         clock.tick(fps)
         g.draw(screen)
@@ -407,7 +447,105 @@ def tanks():
         pygame.display.flip()
 
 
+def win(screen, fps, pl):
+    global lvlpoints
+    global lvl
+    global pointsp
+    global point
+    global player
+    pointsp += lvlpoints
+    clock = pygame.time.Clock()
+    width = 1920
+    ini = 0
+    while ini <= 1080:
+        pygame.draw.rect(screen, (0, 0, 0), ((0, 0), (width, ini)))
+        ini += 1000 / fps
+        clock.tick(fps)
+        pygame.display.flip()
+    f1 = pygame.font.Font(None, 100)
+    f2 = pygame.font.Font(None, 50)
+    text1 = f1.render('Вы выйграли! :)', 0, (82, 82, 82))
+    text2 = f1.render('и набрали ' + str(lvlpoints) + ' очков', 0, (82, 82, 82))
+    text3 = f2.render('нажмите R для рестарта', 0, (82, 82, 82))
+    text4 = f2.render('нажмите ESC для выхода в меню', 0, (82, 82, 82))
+    text5 = f2.render('(очки добавлены к профилю)', 0, (82, 82, 82))
+    text6 = f2.render('нажмите E для перехода на следующий уровень', 0, (82, 82, 82))
+    lvlpoints += int(point[int(player)])
+    pp = str(lvlpoints)
+    while len(pp) != 6:
+        pp = '0' + pp
+    point[int(player)] = pp
+    #
+    f = open('points', 'w')
+    for i in point:
+        f.write(i + '\n')
+    f.close()
+    while True:
+        screen.fill((0, 0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+                    if event.key == pygame.K_r:
+                        return lvles(lvl, pl, screen, fps)
+                    if event.key == pygame.K_e:
+                        if lvl < 5:
+                            lvl += 1
+                            return lvles(lvl, pl, screen, fps)
+                        else:
+                            return
+        screen.blit(text1, (500, 100))
+        screen.blit(text2, (500, 200))
+        screen.blit(text3, (500, 350))
+        screen.blit(text4, (500, 400))
+        screen.blit(text5, (500, 300))
+        screen.blit(text6, (500, 500))
+        clock.tick(fps)
+        pygame.display.flip()
+
+
+def end(screen, fps, pl):
+    global lvlpoints
+    global lvl
+    width = 1920
+    clock = pygame.time.Clock()
+    ini = 0
+    while ini <= 1080:
+        pygame.draw.rect(screen, (0, 0, 0), ((0, 0), (width, ini)))
+        ini += 1000 / fps
+        clock.tick(fps)
+        pygame.display.flip()
+    f1 = pygame.font.Font(None, 100)
+    f2 = pygame.font.Font(None, 50)
+    text1 = f1.render('Вы проиграли! :(', 0, (82, 82, 82))
+    text2 = f1.render('и набрали ' + str(lvlpoints) + ' очков', 0, (82, 82, 82))
+    text3 = f2.render('нажмите R для рестарта', 0, (82, 82, 82))
+    text4 = f2.render('нажмите ESC для выхода в меню', 0, (82, 82, 82))
+    while True:
+        screen.fill((0, 0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+                    if event.key == pygame.K_r:
+                        return lvles(lvl, pl, screen, fps)
+        screen.blit(text1, (500, 100))
+        screen.blit(text2, (500, 200))
+        screen.blit(text3, (500, 350))
+        screen.blit(text4, (500, 400))
+        clock.tick(fps)
+        pygame.display.flip()
+
+
+
 def lvles(lvl, pl, screen, fps):
+    ti = 0
     clock = pygame.time.Clock()
     pla = pygame.sprite.Group()
     base = pygame.sprite.Group()
@@ -504,11 +642,15 @@ def lvles(lvl, pl, screen, fps):
                 for i in mem:
                     Cplayer(*i, pl, pla, bri)
             else:
-                pass
-                # Пройгрыш
+                if ti >= 20:
+                    return end(screen, fps, pl)
+                else:
+                    ti += 1
         if len(enem) == 0:
-            pass
-            # Победа
+            if ti >= 20:
+                return win(screen, fps, pl)
+            else:
+                ti += 1
         if keys[pygame.K_SPACE] and keys[pygame.K_CAPSLOCK] and len(pla) != 0:
             Shell(pla.sprites()[0].rect[0] + 35, pla.sprites()[0].rect[1] + 35, pla.sprites()[0].r, shells, bri)
         if keys[pygame.K_w]:
@@ -525,7 +667,7 @@ def lvles(lvl, pl, screen, fps):
                 Shellenem(i.rect[0] + 35, i.rect[1] + 35, i.r, shellsenem, bri)
         shells.update(enem)
         enem.update(shells)
-        shellsenem.update(pla)
+        shellsenem.update(pla, base)
         pla.update(0, shellsenem)
         base.update(shellsenem)
         if len(base) == 0:
@@ -537,8 +679,10 @@ def lvles(lvl, pl, screen, fps):
                 for i in mem2:
                     Base(*i, 'база.png', base)
             else:
-                pass
-                # Пройгрыш
+                if ti >= 20:
+                    return end(screen, fps, pl)
+                else:
+                    ti += 1
         base.draw(screen)
         bri.draw(screen)
         li.draw(screen)
