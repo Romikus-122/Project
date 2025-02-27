@@ -386,6 +386,8 @@ def tanks():
     mem = 0
     g = pygame.sprite.Group()
     Obv(490, 275, g)
+    text6 = f1.render('E для подтверждения', 0, (100, 100, 100))
+    text7 = f1.render('W, S для выбора', 0, (100, 100, 100))
     while ga:
         screen.fill((0, 0, 0))
         text5 = f5.render(str(point[int(player)][:6]), 0, (100, 100, 100))
@@ -411,6 +413,7 @@ def tanks():
                         ff2 = pygame.font.Font(None, 50)
                         textt2 = ff2.render('нажмите W чтобы увеличить уровень', 0, (82, 82, 82))
                         textt3 = ff2.render('нажмите S чтобы уменьшить уровень', 0, (82, 82, 82))
+                        textt4 = ff2.render('нажмите E чтобы подтвердить', 0, (82, 82, 82))
                         while trt:
                             screen.fill((0, 0, 0))
                             textt1 = ff1.render('Выбранный уровень: ' + str(lvl), 0, (255, 0, 0))
@@ -432,6 +435,7 @@ def tanks():
                             screen.blit(textt1, (500, 300))
                             screen.blit(textt2, (500, 500))
                             screen.blit(textt3, (500, 550))
+                            screen.blit(textt4, (500, 600))
                             clock.tick(fps)
                             pygame.display.flip()
                         lvles(lvl, pl, screen, fps)
@@ -442,6 +446,8 @@ def tanks():
         screen.blit(text3, (500, 200))
         screen.blit(text4, (500, 500))
         screen.blit(text5, (100, 0))
+        screen.blit(text6, (1100, 200))
+        screen.blit(text7, (1100, 300))
         gamep.draw(screen)
         clock.tick(fps)
         pygame.display.flip()
