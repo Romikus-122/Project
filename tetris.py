@@ -78,7 +78,7 @@ def draw_text(screen, best, score, level):
     pause_text1 = f2.render('Чтобы поставить на паузу,', True, "white")
     pause_text2 = f2.render('нажмите кнопку P (англ.)', True, "white")
     exit_text1 = f2.render('Чтобы выйти из игры', True, "white")
-    exit_text2 = f2.render('нажмите кнопку X (англ.)', True, "white")
+    exit_text2 = f2.render('нажмите Esc', True, "white")
     level_text = f2.render(f'Уровень: {level}', True, "white")
 
     pygame.draw.rect(screen, (5, 0, 10), ((1200, 250), (400, 650)))
@@ -187,9 +187,9 @@ def tetris():
                     else:
                         anim_speed = normal_anim_speed
                         paused = False
-                elif event.key == pygame.K_x:
+                elif event.key == pygame.K_ESCAPE:
                     return
-                elif event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:
                     rotate = True
                     if shape[0] == (0, -1):
                         rotate = False
